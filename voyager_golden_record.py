@@ -54,6 +54,8 @@ def save_images(soup: BeautifulSoup):
     Args:
         soup (BeautifulSoup): `soup` object to enumerate and request.
     """
+    if not os.path.exists("images/"):
+        os.mkdir("images")
     images = soup.find_all("div", {"class": "carousel-item"})
     skipped = 0
     print(f"Found {len(images)} images. Download starts in 5 seconds.")
@@ -83,6 +85,8 @@ def save_audio(soup: BeautifulSoup):
     Args:
         soup (BeautifulSoup): `soup` object to enumerate and request.
     """
+    if not os.path.exists("audio/"):
+        os.mkdir("audio")
     audio_src = soup.find_all("source")
     audio_labels = soup.find_all("a", {"class": "list-group-item"})
     skipped = 0
@@ -99,10 +103,8 @@ def save_audio(soup: BeautifulSoup):
         url = URL + str(audio_src[i].get("src"))
         this_audio_label = audio_labels[i].find_all("span")
         track = str(this_audio_label[0].contents[0]).strip(". ")
-        name = str(this_audio_label[1].contents[0]).replace("/", "|")
-        filename = (
-            AUDIO_DIR + track.rjust(2, "0") + " " + name + "." + url.split(".")[-1]
-        )
+        name = str(this_audio_label[1].contents[0]).replace("/", "-")
+        filename =             AUDIO_DIR + track.rjust(2, "0") + " " + name + ".mp3"
         response = get_file(url, filename)
         if response == None:
             skipped += 1
